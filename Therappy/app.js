@@ -7,7 +7,6 @@ const app = express();
 app.set('view engine', 'ejs');
 
 var toCapital = (name) => {
-
 	if (name.length > 1) {
 		var res = [], result = '';
 		name.forEach(item =>{
@@ -30,16 +29,22 @@ var toCapital = (name) => {
 
 var getParamQuery = (item) => {
 	var data = {
-		param: item.search(".com") > 1 ? toCapital(item.split('.com')) : "NO RESPONSE",
-		name: item.substr(1, item.length - 2)
-	};
+		param: '',
+		name: ''
+	}
+	if (item) {
+		data = {
+			param: item.search(".com") > 1 ? toCapital(item.split('.com')) : "NO RESPONSE",
+			name: item.substr(1, item.length - 2)
+		};
+	}
 
-	return data;
+	return data; 
 }
 
 var splitQuery = (params) => {
 	var result = [];
-	if (params.length > 1 & Array.isArray(params)) {
+	if (params && params.length > 1 & Array.isArray(params)) {
 		params.forEach(item => {
 			var data = getParamQuery(item);
 			result.push(data);	
