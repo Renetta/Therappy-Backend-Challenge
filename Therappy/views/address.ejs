@@ -1,0 +1,13 @@
+<html lang="en">
+<head>
+</head>
+<body>
+	<h1> Following are the titles of given websites: </h1>
+
+    <ul >
+      <% qs.forEach(eachAddress => { %>
+        <li> <%= eachAddress.name %> - <%= eachAddress.param %> </li>
+    <% }) %>
+    </ul>
+</body>
+</html>
