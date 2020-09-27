@@ -1,8 +1,10 @@
 const express = require('express');
+var bodyParser = require('body-parser');
 const http = require('http');
 const fs = require('fs');
 const url = require('url');
-const app = express();
+const step = require('step');
+var app = express();
 
 app.set('view engine', 'ejs');
 
@@ -57,22 +59,41 @@ var splitQuery = (params) => {
 	return result;
 }
 
+app.use(bodyParser.json());   
+app.use(bodyParser.urlencoded({extended:true}));  
+
+var queryParams;
+var fileName = 'views/index.html';
 app.get('/I/want/title', (req, res) => {
-	var fileName = 'views/index.html';
 	res.setHeader('Content-type', 'text/html');
-	var query = url.parse(req.url,true).query;
-	fs.readFile(fileName, (err, data) => {
-		if (err) {
-      		return res.end("404 Not Found");
-		} else {
-			res.render('address', {qs:splitQuery(req.query.address)});
-		    return res.end(data);
+
+	//FIRST TASK - comment the lines from 76- 89 to view the first task result.
+
+	// queryParams = url.parse(req.url,true).query;
+	// res.render('address', {task: 'FIRST TASK', qs:splitQuery(req.query.address)});
+	
+//*************************************************************************************
+
+	//SECOND TASK USING FLOW LIBRARY STEP - comment the lines from 70-73 to view the result.
+	step(
+		function readSelf() {
+		   fs.readFile(fileName, this);
+		},
+
+		function rendering(err, queryParams) {
+			if (err) throw err;
+			return res.render('address',  {task: 'SECOND TASK', qs:splitQuery(req.query.address)});
+		},
+		function showIt(err, newText) {
+		    if (err) throw err;
+		    console.log(newText);
 		}
-	});
+	);
+//*****************************************************************************************
 });
 
 const server = http.createServer(app);
-
 server.listen(8080, 'localhost', () => {
 	console.log("Server is connected on port 8080!");
 })  
+
