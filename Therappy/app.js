@@ -4,6 +4,7 @@ const http = require('http');
 const fs = require('fs');
 const url = require('url');
 const step = require('step');
+const RSVP = require('rsvp');
 var app = express();
 
 app.set('view engine', 'ejs');
@@ -67,28 +68,45 @@ var fileName = 'views/index.html';
 app.get('/I/want/title', (req, res) => {
 	res.setHeader('Content-type', 'text/html');
 
-	//FIRST TASK - comment the lines from 76- 89 to view the first task result.
+	//FIRST TASK - comment the lines from 76- 109  to view the first task result.
 
 	// queryParams = url.parse(req.url,true).query;
 	// res.render('address', {task: 'FIRST TASK', qs:splitQuery(req.query.address)});
-	
+
 //*************************************************************************************
 
-	//SECOND TASK USING FLOW LIBRARY STEP - comment the lines from 70-73 to view the result.
-	step(
-		function readSelf() {
-		   fs.readFile(fileName, this);
-		},
+	//SECOND TASK USING FLOW LIBRARY STEP - comment the lines from 70-73  and  96 - 109 to view the result.
+	// step(
+	// 	function readSelf() {
+	// 	   fs.readFile(fileName, this);
+	// 	},
 
-		function rendering(err, queryParams) {
-			if (err) throw err;
-			return res.render('address',  {task: 'SECOND TASK', qs:splitQuery(req.query.address)});
-		},
-		function showIt(err, newText) {
-		    if (err) throw err;
-		    console.log(newText);
+	// 	function rendering(err, queryParams) {
+	// 		if (err) throw err;
+	// 		return res.render('address',  {task: 'SECOND TASK', qs:splitQuery(req.query.address)});
+	// 	},
+	// 	function showIt(err, newText) {
+	// 	    if (err) throw err;
+	// 	    console.log(newText);
+	// 	}
+	// );
+//*****************************************************************************************
+
+	//THIRD TASK USING FLOW LIBRARY STEP - comment the lines from 70-91 to view the result.
+	var promise = new RSVP.Promise((fulfill, reject) => {
+		var queryData = splitQuery(req.query.address); 
+		if (queryData.length >= 1 ) {
+			fulfill(queryData);
+		} else {
+			reject(queryData);
 		}
-	);
+	});
+
+	promise.then((data) => {
+		return res.render('address', {task: 'THIRD TASK', qs: data});
+	}, (data) => {
+		return res.render('address', {task: 'THIRD TASK', qs: {param: '', name: ''}});
+	});
 //*****************************************************************************************
 });
 
